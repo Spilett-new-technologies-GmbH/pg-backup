@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: your_database_name
+      POSTGRES_USER: your_postgres_user
+      POSTGRES_PASSWORD: your_postgres_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  pg-backup:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: RUNNER
+      args:
+        - UID=1000
+        - GID=1000
+    env_file:
+      - ".env"
+    depends_on:
+      - postgres
+    volumes:
+      - backups_data:/backups
+
+volumes:
+  postgres_data:
+  backups_data:
